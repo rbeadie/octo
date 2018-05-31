@@ -6,9 +6,7 @@ define([
     "jquery-ui"
 ], function(
     template,
-    $,
-    getSiteListCollection,
-    getListColumns
+    $
 ){
 
     var
@@ -18,85 +16,43 @@ define([
      * @namespace main
      */
     main = /** @lends main */{
+
         /**
          * Starts the app.
-         * @param {HTMLElement} appCntrEle
-         *      The HTMl element where the app should live
-         *
-         * @param {HTMLElement} overlayEle
-         *      The overlay (ui blocker) for the app.
+         * @param {HTMLElement} appContainerDiv
+         *      The HTMl element where the app will be displayed
          */
-        start: function(appCntrEle, overlayEle){
+        start: function(appContainerDiv){
 
-            // var divEle = document.createElement("div");
-            // divEle.innerHTML = viewTemplate;
-            // appCntrEle.appendChild(divEle);
-            // setupMenu();
-            // // hide the overlay
-            // overlayEle.style.display = "none";
+            var siteUrl = '/sites/corporate/iris/octo/';
+            var listName = 'Documents';                   
 
-            inst.$appCntr = $(appCntrEle).html(template);
-            setupMenu();
-            overlayEle.style.display = "none";
+            retrieveListItems(siteUrl, listName);
 
-        }
-    }, //end: main
+            console.log('Done');
+
+            inst.$appCntr = $(appContainerDiv).html(template);
+        }    
+    },
     
-    setupMenu = function(){
-        var
-        $lists  = inst.$appCntr.find("div.octo-menu-lists > select"),
-        $fields = inst.$appCntr.find("div.octo-menu-columns > select"),
-        $kanban = inst.$appCntr.find("div.octo-kanban");
-
-        getSiteListCollection()
-        .then(function(siteLists){
-
-            var listOptions = siteLists.reduce(function(optionsHtml, list){
-                optionsHtml += '<option value="' + list.InternalName + '">' + list.Title + '</option>';
-                return optionsHtml;
-            }, '<option value="">Select List...</option>');
-
-            $lists.html(listOptions);
-
-            $lists.on("change", function(){
-
-                $fields.html('<option value="">Pick List First</option>');
-                $kanban.empty();
-
-                if (!$lists.val()) {
-                    return;
-                }
-
-                getListColumns({listName: $lists.val()})
-                .then(function(listColumns){
-                    var colOptions = listColumns.reduce(function(html, column){
-                        if (column.Type === "Lookup" || column.Type === "Choice") {
-                            html += '<option value="' + column.StaticName + '">' + column.DisplayName + '</option>';
-                        }
-                        return html;
-                    }, '<option value="">Select Column...</option>');
-                    $fields.html(colOptions);
-                });
-
-            });
-
-            $fields.on("change", function(){
-
-                if (!$fields.val()) {
-                    return;
-                }
-
-                // board(
-                //     $("<div/>").appendTo($kanban.empty()),
-                //     {
-                //         list:   $lists.val(),
-                //         field:  $fields.val()
-                //     }
-                // );
-
-            });
-
-        });
+    retrieveListItems = function(siteUrl, listName) {
+        var clientContext = new SP.ClientContext(siteUrl);
+        var oList = clientContext.get_web().get_lists().getByTitle(listName);
+    
+        var camlQuery = new SP.CamlQuery();
+        camlQuery.set_viewXml(
+            '<View><Query><Where><Geq><FieldRef Name=\'ID\'/>' +
+            '<Value Type=\'Number\'>1</Value></Geq></Where></Query>' +
+            '<RowLimit>100</RowLimit></View>'
+        );
+        this.collListItem = oList.getItems(camlQuery);
+    
+        DanaMethodLoad("load", clientContext, collListItem);
+        clientContext.executeQueryAsync(function(data) {
+            console.log('query succeeded', data);
+        },
+          function(e){console.log('query failed');}
+        );
     };
 
     return main;

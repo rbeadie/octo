@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     buildDate   = grunt.template.today('yyyy-mm-dd'),
     buildYear   = grunt.template.today('yyyy'),
     buildId     = (new Date()).getTime(),
-    _           = require("lodash/lodash.js"),
+    _           = require("grunt/node_modules/lodash/lodash.js"),
     fs          = require('fs'),
     path        = require('path'),
     htmlMinifier= require('html-minifier').minify,
@@ -651,7 +651,7 @@ module.exports = function(grunt) {
         grunt.file.write(grunt.template.process("<%= buildTempFolder %>/app.code.js"), "");
 
         grunt.task.run([
-            "jshint",
+            // "jshint",
             "clean:build",
             "copy:buildPrep",
             'copy:build'

@@ -28,6 +28,7 @@
         <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.3/es5-shim.min.js"></script>
     <![endif]-->
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css?_@BUILD">
 
 </asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderSearchArea" runat="server">

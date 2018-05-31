@@ -1,11 +1,14 @@
 {
             "context": "app",
             "baseUrl": "./",
+            "urlArgs": "@BUILD",
             "paths": {
                 "less":       "vendor/require-less/less",
                 "lessc":      "vendor/require-less/lessc",
                 "normalize":  "vendor/require-less/normalize",
-                "text":       "vendor/requirejs-text/text"
+                "text":       "vendor/requirejs-text/text",
+                "jquery":     "vendor/jquery/dist/jquery",
+                "jquery-ui":  "vendor/jquery-ui/jquery-ui"
             },
             "less": {
                 "relativeUrls":   true,
