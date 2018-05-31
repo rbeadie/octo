@@ -15,8 +15,6 @@
 // BUILD_INCLUDE("<%= buildTempFolder %>/app.code.js")
 
     var
-    overlayEle = document.createElement("div"),
-
     isInitDone = false,
 
     // App initializer... executes only once.
