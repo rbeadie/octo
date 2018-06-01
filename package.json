@@ -6,8 +6,6 @@
   },
   "license": "",
   "dependencies": {
-    "angular": "^1.7.0",
-    "bootstrap-css-only": "^4.1.0"
   },
   "devDependencies": {
     "amdclean": "^2.4.0",

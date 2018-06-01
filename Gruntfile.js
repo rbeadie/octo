@@ -471,8 +471,9 @@ module.exports = function(grunt) {
                     "app/*.aspx",
                     "app/scripts/**/*",
                     "app/styles/**/*",
+                    "app/models/mainModel.js",
                     "app/vendor/jquery/dist/jquery.js",
-                    "app/vendor/jquery-ui/jquery-ui.js",
+                    "app/vendor/knockout/dist/knockout.js",
                     "app/vendor/requirejs/require.js",
                     "app/vendor/requirejs-text/text.js",
                     "app/vendor/require-less/*.js"
