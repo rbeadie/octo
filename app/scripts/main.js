@@ -2,6 +2,7 @@ define([
     "text!./main.html",
     "jquery",
     "ko",
+    "./jsom2json",
     "../models/mainModel",
     // -modules not needing a reference----------
     "less!../styles/common"
@@ -9,10 +10,12 @@ define([
     template,
     $,
     ko,
+    j2j,
     VM
 ) {
 
         var
+            vm = new VM(),
             inst = {},
             /**
              * Apps main module
@@ -27,11 +30,20 @@ define([
                  */
                 start: function (appContainerDiv) {
 
-                    var siteUrl = '/sites/corporate/iris/';
-                    var listName = 'Master Projects List';
+                    var siteUrl = '/sites/corporate/iris/octo';
+                    var listName = 'Practices';
 
-                    // Set up main model
-                    var vm = new VM();
+                    initializeModel();   
+                    
+                    j2j(siteUrl, listName)
+
+                    inst.$appCntr = $(appContainerDiv).html(template);
+                }
+            }, 
+
+            initializeModel = function() {
+                    // // Set up main model
+                    // var vm = new VM();
                     
                     // init practices list with static data
                     var practices = [
@@ -52,7 +64,7 @@ define([
                         { name: 'Interactive Multimedia Instruction', code: 'IMI', portfolio: 'Training and Simulation', description: ' Includes Computer-based Training (student led), interactive courseware (instructor led), mobile applications, 3D modeling, applied gaming, video and audio recording, realistic animation, constructive models' },
                         { name: 'Mission Training Services', code: 'MTS', portfolio: 'Training and Simulation', description: ' Includes simulation supported scenario generation, training network setup, integration with live C4ISR systems, simulation operations and training, data collection and after action reviews., proficiency exercises, collective training exercises, new equipment training' },
                         { name: 'Instructional Management and Delivery', code: 'IMD', portfolio: 'Training and Simulation', description: ' Includes Classroom/On-Site, Virtual Training, Over-the-Shoulder, Learning Management Support, remote/exportable training packages (i.e. CDs),' },
-                        {  name: 'Modeling and Simulation', code: 'MAS', portfolio: 'Training and Simulation', description: ' Includes Development and integration of behavior models, physical models, run-time infrastructure, synthetic environment, 3D models/printing, and image generation in the virtual and constructive domains, supporting training, engineering, and analysis, CAD, simulation prototyping' },
+                        { name: 'Modeling and Simulation', code: 'MAS', portfolio: 'Training and Simulation', description: ' Includes Development and integration of behavior models, physical models, run-time infrastructure, synthetic environment, 3D models/printing, and image generation in the virtual and constructive domains, supporting training, engineering, and analysis, CAD, simulation prototyping' },
                         { name: 'Measurement, Evaluation, and Strategy', code: 'MES', portfolio: 'Training and Simulation', description: ' Includes Job Task Analysis, Diagnostic Assessment, Cert & Selection Testing, Governance, Adaptive Testing, Learning Analytics, Decision Support, Human Performance Assessments' },
                         { name: 'Instructional Systems Design', code: 'ISD', portfolio: 'Training and Simulation', description: ' Includes Front End Analysis, Learning Theory, Refresh/Refurbishment, Curriculum Development, Gap Analysis, ADDIE, technical manuals' }
                     ]
@@ -83,55 +95,9 @@ define([
                         { programName: '', projectNumber: '', businessUnit: '', customer: '', contractType: ''}
                     ]
                     vm.loadProjects(projects);
-                    
 
-                    // retrieveListItems(siteUrl, listName);
-                        
-                    console.log('Done', vm);
-
-                    inst.$appCntr = $(appContainerDiv).html(template);
-                }
-            },
-
-
-            retrieveListItems = function (siteUrl, listName) {
-                var clientContext = new SP.ClientContext(siteUrl);
-                var oList = clientContext.get_web().get_lists().getByTitle(listName);
-
-                this.collListItem = oList.getItems(createAllItemsQuery());
-
-                DanaMethodLoad("load", clientContext, collListItem);
-                clientContext.executeQueryAsync(
-                    Function.createDelegate(this, logListItems),
-                    Function.createDelegate(this, errorHandler)
-                );
-            },
-
-            logListItems = function () {
-                console.log('query succeeded');
-                
-                var listItemEnumerator = this.collListItem.getEnumerator();
-
-                while (listItemEnumerator.moveNext()) {
-                    var listItem = listItemEnumerator.get_current();
-                    console.log(listItem);
-                }
-            },
-
-            createAllFilesQuery = function() {
-                var qry = new SP.CamlQuery();
-                qry.set_viewXml('<View Scope="RecursiveAll"><Query><Where><Eq><FieldRef Name="FSObjType" /><Value Type="Integer">0</Value></Eq></Where></Query></View>');
-                return qry;
-            },
-            createAllItemsQuery = function() {
-                var qry = new SP.CamlQuery();
-                qry.set_viewXml(
-                    '<View><Query><Where><Geq><FieldRef Name=\'ID\'/>' +
-                    '<Value Type=\'Number\'>1</Value></Geq></Where></Query>' +
-                    '<RowLimit>100</RowLimit></View>'
-                );                
-                return qry;
-            },
+                    console.log('Done', vm);                         
+            }
                         
             errorHandler = function () {
                 console.log('query failed', arguments[1].get_message());
