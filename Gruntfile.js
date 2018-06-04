@@ -472,6 +472,7 @@ module.exports = function(grunt) {
                     "app/scripts/**/*",
                     "app/styles/**/*",
                     "app/models/mainModel.js",
+                    "app/models/practiceModel.js",
                     "app/vendor/jquery/dist/jquery.js",
                     "app/vendor/knockout/dist/knockout.js",
                     "app/vendor/requirejs/require.js",
