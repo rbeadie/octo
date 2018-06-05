@@ -6,47 +6,72 @@ define([
         //  Takes a list name/url
         //  Reads the list items, and returns an array of json objects
         var
-            clientContext = {},
-            spList = {},
-            spListFields = [],
-            spListItems = [],
+            
+            main = {
+                
+                getList: function (args) {
+                    return getContext(args.siteUrl, args.listName)
+                        .then(getSPList)
+                        .then(getSPListItems)
+                        // .then(getItemFields)
+                        // .finally(function(values){args.data = values})
+                        .then(function(val){console.log('out',val)})
+                },
 
-            main = function (siteUrl, listName) {
-                clientContext = new SP.ClientContext(siteUrl)
-
-                return getSPList(listName)
-                    .then(getSPListItems)
-                    .then(getItemFields)
-                    // .then(function(val){console.log('out',val)})
+                getListFields: function (siteUrl, listName) {
+                    return getContext(siteUrl, listName)
+                        .then(getSPList)
+                        .then(getSPListFields)
+                        // .then(function(val){console.log('out',val)})
+                }
             },
 
-            getSPList = function (listName) {
+            getContext = function(siteUrl, listName){
                 return new Promise(function(resolve,reject){
-                    resolve(clientContext.get_web().get_lists().getByTitle(listName))
+                    resolve([new SP.ClientContext(siteUrl), listName])
+                })                
+            }
+
+            getSPList = function (args) {
+                var context = args[0]
+                var listName = args[1]
+                return new Promise(function(resolve,reject){
+                    resolve([context,context.get_web().get_lists().getByTitle(listName)])
                 })
             },
 
-            getSPListItems = function (spList) {
-                return new Promise(function (resolve, reject) {
+            // getSPListItems = function (args) {
+            //     var context = args[0]
+            //     var spList = args[1]
+            //     return new Promise(function (resolve, reject) {
+            //         var listItems = spList.getItems(createAllItemsQuery());
+            //         // var coll = []
 
-                    this.listItems = spList.getItems(createAllItemsQuery());
-                    var coll = []
+            //         // DanaMethodLoad("load", clientContext, listItems);
+            //         context.load(listItems)
+            //         context.executeQueryAsync(
+            //             Function.createDelegate(this, function () {
+            //                 var collEnumerator = this.listItems.getEnumerator()
 
-                    // DanaMethodLoad("load", clientContext, listItems);
-                    clientContext.load(this.listItems)
-                    clientContext.executeQueryAsync(
-                        Function.createDelegate(this, function () {
-                            var collEnumerator = this.listItems.getEnumerator()
+            //                 while (collEnumerator.moveNext()) {
+            //                     coll.push(collEnumerator.get_current())
+            //                 }
+            //                 resolve(coll)
+            //             }),
+            //             Function.createDelegate(this, reject)
+            //         )
+            //     })
 
-                            while (collEnumerator.moveNext()) {
-                                coll.push(collEnumerator.get_current())
-                            }
-                            resolve(coll)
-                        }),
-                        Function.createDelegate(this, reject)
-                    )
-                })
-            },
+            // },
+
+            getSPListItems = function(args){
+                var context = args[0]
+                var spList = args[1]
+                var spListItems = spList.getItems(createAllItemsQuery());
+                context.load(spListItems)
+                return context.executeQuery()
+
+            }
             
             getItemFields = function(items){
                 return Promise.all(items.map(function(item){
@@ -54,6 +79,31 @@ define([
                         resolve(item.get_fieldValues())
                     })
                 }))
+            },
+
+            getSPListFields = function (args) {
+                var context = args[0]
+                var spList = args[1]
+                return new Promise(function (resolve, reject) {
+    
+                    this.listFields = spList.get_fields()
+                    var fields = []
+    
+                    context.load(this.listFields)
+    
+                    context.executeQueryAsync(
+                        Function.createDelegate(this, function () {
+                            var fieldEnumerator = this.listFields.getEnumerator()
+    
+                            while (fieldEnumerator.moveNext()) {
+                                var oField = {name: fieldEnumerator.get_current().get_internalName(), label: fieldEnumerator.get_current().get_title()} 
+                                fields.push(oField)
+                            }
+                            resolve(fields)
+                        }),
+                        Function.createDelegate(this, reject)
+                    )
+                })
             },
 
             // Query used to read all items in a list
@@ -66,6 +116,16 @@ define([
                 );
                 return qry;
             },
+
+            // from site http://johnliu.net/blog/2015/12/convert-sharepoint-jsoms-executequeryasync-to-promise-in-the-prototype
+            SP.ClientContext.prototype.executeQuery = function() {
+                var deferred = $q.defer();
+                this.executeQueryAsync(
+                    function(){ deferred.resolve(arguments); },
+                    function(){ deferred.reject(arguments); }
+                );
+                return deferred.promise;
+             };
 
             errorHandler = function () {
                 console.log('query failed', arguments[1].get_message());

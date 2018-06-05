@@ -4,16 +4,18 @@ define([
     "ko",
     "./jsom2json",
     "../models/mainModel",
-    "./data",
+    "./config",
     // -modules not needing a reference----------
-    "less!../styles/common"
+    "less!../styles/common",
+    "./mapListFields"
 ], function (
     template,
     $,
     ko,
     j2j,
     VM,
-    data
+    config,
+    mapListFields
 ) {
 
         var
@@ -32,16 +34,35 @@ define([
                  */
                 start: function (appContainerDiv) {
 
-                    var siteUrl = '/sites/corporate/iris/octo';
-                    var listName = 'Practices';
+                    console.log(config)
 
-                    initializeModel()   
+                    var spData = {}
                     
-                    j2j(siteUrl, listName).then(function(out){console.log('out',out)})
+                    Promise.all(
+                        // config.lists.slice(0,3).map(j2j.getList)
+                        [
+                        // j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits", dataSetName: "businessUnits"}),
+                        // j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices", dataSetName: "practices"}).then(function(out){spData.practices = out}),
+                        // j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type", dataSetName: "contractTypes"}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer", dataSetName: "customers"}).then(function(out){spData.customers = out})
+                    ]
+                    )
+                    // .then(function(out){console.log('out',out); console.log('data',spData)})
 
-                    inst.$appCntr = $(appContainerDiv).html(template);
+                    // var siteUrl = '/sites/corporate/iris/octo';
+                    // var listName = 'Customer';
+
+                    // j2j.getList(siteUrl, listName)
+                    // .then(vm.loadSPCustomers)
+                    // .then(function(){console.log('vm',vm)})
+
+                    inst.$appCntr = $(appContainerDiv).html(template)
                 }
             }, 
+
+            loadSPLists = function(spUrl){
+
+            },
 
             initializeModel = function() {
                     // // Set up main model
@@ -55,7 +76,7 @@ define([
                     vm.loadProjects(data.projects);
 
                     console.log('Done', vm);                         
-            }
+            },
                         
             errorHandler = function () {
                 console.log('query failed', arguments[1].get_message());

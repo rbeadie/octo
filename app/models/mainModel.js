@@ -13,65 +13,38 @@ define([
     , BusinessUnitModel
     , ProjectListModel
 ) {
-    return function mainModel () {
-        var self = this
+        return function mainModel() {
+            var self = this
 
-        self.modelName = ko.observable('main model')
+            self.modelName = ko.observable('main model')
 
-        self.practiceList = new PracticeModel()
-        self.customerList = new CustomerModel()
-        self.contractTypeList = new ContractTypeModel()
-        self.buList = new BusinessUnitModel()
-        self.projectList = new ProjectListModel()
+            self.practiceList = new PracticeModel()
+            self.customerList = new CustomerModel()
+            self.contractTypeList = new ContractTypeModel()
+            self.businessUnitList = new BusinessUnitModel()
+            self.projectList = new ProjectListModel()
 
-        // self.projectListModel = new ProjectListModel()
- 
-        // Actions    
-        self.loadPractices = function(practices){
-            self.practiceList.init(practices)
-        }
-        self.loadCustomers = function(customers){
-            self.customerList.init(customers)
-        }
-        self.loadContractTypes = function(contractTypes){
-            self.contractTypeList.init(contractTypes)
-        }
-        self.loadBusinessUnits = function(businessUnits){
-            self.buList.init(businessUnits)
-        }
-        self.loadProjects = function(projects){
-            self.projectList.init(projects)
+
+            // Actions    
+            self.init = function (data) {
+                return Promise.all([
+                    self.practiceList.init(data.practices),
+                    self.customerList.init(data.customers),
+                    self.contractTypeList.init(data.contractTypes),
+                    self.businessUnitList.init(data.businessUnits),
+                    self.projectList.init(data.projects)
+                ])
+            }
+
+            self.spInit = function (spdata) {
+                return Promise.all([
+                    self.businessUnitList.spInit(spdata.businessUnits),
+                    self.contractTypeList.spInit(spdata.contractTypes),
+                    self.customerList.spInit(spdata.customers),
+                    self.practiceList.spInit(spdata.practices),
+                    self.projectList.spInit(spdata.projects)
+                ])
+            }
         }
 
-        self.init = function(practices, customers, contractTypes, businessUnits, projects){
-            async.parallel ([
-                function(callback) {                
-                    self.loadPractices(practices)
-                    callback(null)
-                },
-                function(callback) {                
-                    self.loadCustomers(customers)
-                    callback(null)
-                 },
-                 function(callback) {                
-                    self.loadContractTypes(contractTypes)
-                    callback(null)
-                 },
-                 function(callback) {                
-                    self.loadBUs(businessUnits)
-                    callback(null)
-                 },
-                  function(callback) {
-                   self.loadProjects(projects)
-                   callback(null)
-                }
-            ],
-            function(err){
-                if (err){
-                    console.log('error: ', err)
-                }
-            })
-        }
-    }
-
-})
+    })

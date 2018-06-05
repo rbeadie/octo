@@ -16,6 +16,11 @@ define([
             )
         }
 
+        self.spInit = function(spdata){
+            self.customers(
+                spdata.map(mapSPrecord)
+            )
+        }
     },
 
     contractTypeModel = function (contractType) {
@@ -23,8 +28,19 @@ define([
         var self = this;
 
         self.contractTypeId = contractType.contractTypeId
-        self.contractTypeName = ko.observable(contractType.name)
+        self.contractTypeName = ko.observable(contractType.contractTypeName)
 
+    },
+
+    // This function maps the SharePoint List Fields onto the knockout model. The field name should be the internal name (not display name)
+    mapSPrecord = function(sprecord){
+        var row = {}
+
+        row.contractTypeId = sprecord.ID
+        row.contractTypeName = sprecord.Title
+
+        return new contractTypeModel(row)
+    
     };
 
     return contractTypeListModel;

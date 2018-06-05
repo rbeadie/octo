@@ -16,6 +16,12 @@ define([
             )
         }
 
+        self.spInit = function(spdata){
+            self.customers(
+                spdata.map(mapSPrecord)
+            )
+        }
+
     },
 
     practiceModel = function (practice) {
@@ -23,11 +29,25 @@ define([
         var self = this;
 
         self.practiceId = practice.practiceId
-        self.practiceName = ko.observable(practice.name)
-        self.practiceCode = ko.observable(practice.code)
-        self.practicePortfolio = ko.observable(practice.portfolio)
-        self.practiceDescription = ko.observable(practice.description)
+        self.practiceName = ko.observable(practice.practiceName)
+        self.practiceCode = ko.observable(practice.practiceCode)
+        self.practicePortfolio = ko.observable(practice.practicePortfolio)
+        self.practiceDescription = ko.observable(practice.practiceDescription)
 
+    },
+
+    // This function maps the SharePoint List Fields onto the knockout model. The field name should be the internal name (not display name)
+    mapSPrecord = function(sprecord){
+        var row = {}
+
+        row.practiceId = sprecord.ID
+        row.practiceName = sprecord.Title
+        row.practiceCode = sprecord.Code
+        row.practicePortfolio = sprecord.Portfolio
+        row.practiceDescription = sprecord.CategoryDescription
+
+        return new practiceModel(row)
+    
     };
 
     return practiceListModel;

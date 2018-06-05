@@ -16,6 +16,11 @@ define([
             )
         }
 
+        self.spInit = function(spdata){
+            self.customers(
+                spdata.map(mapSPrecord)
+            )
+        }
     },
 
     businessUnitModel = function (businessUnit) {
@@ -23,11 +28,26 @@ define([
         var self = this;
 
         self.businessUnitId = businessUnit.businessUnitId
-        self.businessUnitName = ko.observable(businessUnit.name)
-        self.businessUnitCode = ko.observable(businessUnit.code)
-        self.businessUnitDescription = ko.observable(businessUnit.description)
+        self.businessUnitName = ko.observable(businessUnit.businessUnitName)
+        self.businessUnitCode = ko.observable(businessUnit.businessUnitCode)
+        self.businessUnitDescription = ko.observable(businessUnit.businessUnitDescription)
 
+    },
+
+    // This function maps the SharePoint List Fields onto the knockout model. The field name should be the internal name (not display name)
+    mapSPrecord = function(sprecord){
+        var row = {}
+
+        row.businessUnitId = sprecord.ID
+        row.businessUnitName = sprecord.FullName
+        row.businessUnitCode = sprecord.Title
+        row.businessUnitDescription = sprecord.CategoryDescription
+
+        return new businessUnitModel(row)
+    
     };
+
+
 
     return businessUnitListModel;
 });
