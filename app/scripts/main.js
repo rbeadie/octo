@@ -34,17 +34,17 @@ define([
                  */
                 start: function (appContainerDiv) {
 
-                    console.log(config)
+                    // console.log(config)
 
                     var spData = {}
                     
                     Promise.all(
                         // config.lists.slice(0,3).map(j2j.getList)
                         [
-                        // j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits", dataSetName: "businessUnits"}),
-                        // j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices", dataSetName: "practices"}).then(function(out){spData.practices = out}),
-                        // j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type", dataSetName: "contractTypes"}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer", dataSetName: "customers"}).then(function(out){spData.customers = out})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits", dataSetName: "businessUnits"}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices", dataSetName: "practices"}), //.then(function(out){spData.practices = out}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type", dataSetName: "contractTypes"}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer", dataSetName: "customers"})   //.then(function(out){spData.customers = out})
                     ]
                     )
                     // .then(function(out){console.log('out',out); console.log('data',spData)})

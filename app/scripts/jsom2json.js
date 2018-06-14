@@ -36,42 +36,45 @@ define([
                 var context = args[0]
                 var listName = args[1]
                 return new Promise(function(resolve,reject){
-                    resolve([context,context.get_web().get_lists().getByTitle(listName)])
+                    resolve([context,listName, context.get_web().get_lists().getByTitle(listName)])
                 })
             },
 
-            // getSPListItems = function (args) {
+            getSPListItems = function (args) {
+                var context = args[0]
+                var lname = args[1]
+                var spList = args[2]                
+                return new Promise(function (resolve, reject) {
+                    // this.listItems = spList.getItems(createAllItemsQuery());
+                    var spListItems = spList.getItems(createAllItemsQuery());
+                    
+                    // DanaMethodLoad("load", clientContext, listItems);
+                    context.load(spListItems)
+                    context.executeQueryAsync(
+                        Function.createDelegate(this, function (spListItems) {
+                            var coll = []
+                            // var collEnumerator = this.listItems.getEnumerator()
+                            var collEnumerator = spListItems.getEnumerator()
+
+                            while (collEnumerator.moveNext()) {
+                                coll.push(collEnumerator.get_current())
+                            }
+                            resolve(coll)
+                        }),
+                        Function.createDelegate(this, reject)
+                    )
+                })
+
+            },
+
+            // getSPListItems = function(args){
             //     var context = args[0]
             //     var spList = args[1]
-            //     return new Promise(function (resolve, reject) {
-            //         var listItems = spList.getItems(createAllItemsQuery());
-            //         // var coll = []
+            //     var spListItems = spList.getItems(createAllItemsQuery());
+            //     context.load(spListItems)
+            //     return context.executeQuery()
 
-            //         // DanaMethodLoad("load", clientContext, listItems);
-            //         context.load(listItems)
-            //         context.executeQueryAsync(
-            //             Function.createDelegate(this, function () {
-            //                 var collEnumerator = this.listItems.getEnumerator()
-
-            //                 while (collEnumerator.moveNext()) {
-            //                     coll.push(collEnumerator.get_current())
-            //                 }
-            //                 resolve(coll)
-            //             }),
-            //             Function.createDelegate(this, reject)
-            //         )
-            //     })
-
-            // },
-
-            getSPListItems = function(args){
-                var context = args[0]
-                var spList = args[1]
-                var spListItems = spList.getItems(createAllItemsQuery());
-                context.load(spListItems)
-                return context.executeQuery()
-
-            }
+            // }
             
             getItemFields = function(items){
                 return Promise.all(items.map(function(item){
@@ -117,15 +120,15 @@ define([
                 return qry;
             },
 
-            // from site http://johnliu.net/blog/2015/12/convert-sharepoint-jsoms-executequeryasync-to-promise-in-the-prototype
-            SP.ClientContext.prototype.executeQuery = function() {
-                var deferred = $q.defer();
-                this.executeQueryAsync(
-                    function(){ deferred.resolve(arguments); },
-                    function(){ deferred.reject(arguments); }
-                );
-                return deferred.promise;
-             };
+            // // from site http://johnliu.net/blog/2015/12/convert-sharepoint-jsoms-executequeryasync-to-promise-in-the-prototype
+            // SP.ClientContext.prototype.executeQuery = function() {
+            //     var deferred = $q.defer();
+            //     this.executeQueryAsync(
+            //         function(){ deferred.resolve(arguments); },
+            //         function(){ deferred.reject(arguments); }
+            //     );
+            //     return deferred.promise;
+            //  };
 
             errorHandler = function () {
                 console.log('query failed', arguments[1].get_message());
