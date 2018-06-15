@@ -17,7 +17,7 @@ define([
         }
 
         self.spInit = function(spdata){
-            self.customers(
+            self.practices(
                 spdata.map(mapSPrecord)
             )
         }

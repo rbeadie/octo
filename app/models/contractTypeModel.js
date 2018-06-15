@@ -17,7 +17,7 @@ define([
         }
 
         self.spInit = function(spdata){
-            self.customers(
+            self.contractTypes(
                 spdata.map(mapSPrecord)
             )
         }

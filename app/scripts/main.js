@@ -41,42 +41,24 @@ define([
                     Promise.all(
                         // config.lists.slice(0,3).map(j2j.getList)
                         [
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits", dataSetName: "businessUnits"}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices", dataSetName: "practices"}), //.then(function(out){spData.practices = out}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type", dataSetName: "contractTypes"}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer", dataSetName: "customers"})   //.then(function(out){spData.customers = out})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits", dataSetName: "businessUnits"})
+                        .then(function(out){spData.businessUnits = out; vm.businessUnitList.spInit(out)}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices", dataSetName: "practices"})
+                        .then(function(out){spData.practices = out; vm.practiceList.spInit(out)}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type", dataSetName: "contractTypes"})
+                        .then(function(out){spData.contractTypes = out; vm.contractTypeList.spInit(out)}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer", dataSetName: "customers"})
+                        .then(function(out){spData.customers = out; vm.customerList.spInit(out)})
                     ]
                     )
-                    // .then(function(out){console.log('out',out); console.log('data',spData)})
+                    .then(function(out){console.log('data',spData); console.log('vm',vm)})
 
-                    // var siteUrl = '/sites/corporate/iris/octo';
-                    // var listName = 'Customer';
 
-                    // j2j.getList(siteUrl, listName)
-                    // .then(vm.loadSPCustomers)
-                    // .then(function(){console.log('vm',vm)})
 
                     inst.$appCntr = $(appContainerDiv).html(template)
                 }
             }, 
 
-            loadSPLists = function(spUrl){
-
-            },
-
-            initializeModel = function() {
-                    // // Set up main model
-                    // var vm = new VM();
-                    
-                    // init practices list with static data
-                    vm.loadPractices(data.practices);
-                    vm.loadCustomers(data.customers);
-                    vm.loadContractTypes(data.contractTypes);
-                    vm.loadBusinessUnits(data.businessUnits);
-                    vm.loadProjects(data.projects);
-
-                    console.log('Done', vm);                         
-            },
                         
             errorHandler = function () {
                 console.log('query failed', arguments[1].get_message());
