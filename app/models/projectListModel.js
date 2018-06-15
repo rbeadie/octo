@@ -1,9 +1,7 @@
 define([
     "ko"
-    , "./projectModel"
 ], function (
     ko
-    , ProjectModel
 ) {
     var 
     projectListModel = function() {
