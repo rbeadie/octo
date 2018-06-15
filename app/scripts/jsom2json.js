@@ -43,27 +43,44 @@ define([
             getSPListItems = function (args) {
                 var context = args[0]
                 var lname = args[1]
-                var spList = args[2]                
-                return new Promise(function (resolve, reject) {
-                    // this.listItems = spList.getItems(createAllItemsQuery());
-                    var spListItems = spList.getItems(createAllItemsQuery());
-                    
-                    // DanaMethodLoad("load", clientContext, listItems);
-                    context.load(spListItems)
-                    context.executeQueryAsync(
-                        Function.createDelegate(this, function (spListItems) {
-                            var coll = []
-                            // var collEnumerator = this.listItems.getEnumerator()
-                            var collEnumerator = spListItems.getEnumerator()
+                var spList = args[2]         
+                var deferred = $.Deferred()
+                var coll = []
+                var spListItems = spList.getItems(createAllItemsQuery())
+                context.load(spListItems)
+                context.executeQueryAsync(Function.createDelegate(this, function(){
+                        var collEnumerator = spListItems.getEnumerator()
+        
+                        while (collEnumerator.moveNext()) {
+                            coll.push(collEnumerator.get_current())
+                        }
+                        deferred.resolve(coll)
+                    }), 
+                    Function.createDelegate(this, function(sender, args){
+                        deferred.reject(args.get_message())
+                    }))
+                return deferred.promise()
 
-                            while (collEnumerator.moveNext()) {
-                                coll.push(collEnumerator.get_current())
-                            }
-                            resolve(coll)
-                        }),
-                        Function.createDelegate(this, reject)
-                    )
-                })
+                // return new Promise(function (resolve, reject) {
+                //     // this.listItems = spList.getItems(createAllItemsQuery());
+                //     var spListItems = spList.getItems(createAllItemsQuery());
+                    
+                //     // DanaMethodLoad("load", clientContext, listItems);
+                //     context.load(spListItems)
+                //     context.executeQueryAsync(
+                //         Function.createDelegate(this, function (spListItems) {
+                //             var coll = []
+                //             // var collEnumerator = this.listItems.getEnumerator()
+                //             var collEnumerator = spListItems.getEnumerator()
+
+                //             while (collEnumerator.moveNext()) {
+                //                 coll.push(collEnumerator.get_current())
+                //             }
+                //             resolve(coll)
+                //         }),
+                //         Function.createDelegate(this, reject)
+                //     )
+                // })
 
             },
 
