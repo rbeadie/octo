@@ -43,7 +43,13 @@ define([
                         data.map(function(row){return new ProjectModel(row)})
                     )
         }
-        
+
+        self.spInit = function(spdata){
+            self.projectList(
+                spdata.map(mapSPrecord)
+            )
+        }
+
         nextIndex = function(){
             i = self.firstRecord() + self.numberOfRecords() >  self.projectList().length ? self.firstRecord() : self.firstRecord() + self.numberOfRecords()
             self.firstRecord(i)
@@ -61,11 +67,38 @@ define([
         var self = this;
 
         self.projectId = project.projectId
-        self.projectName = ko.observable(project.name)
-        self.projectCode = ko.observable(project.code)
-        self.projectPortfolio = ko.observable(project.portfolio)
-        self.projectDescription = ko.observable(project.description)
+        self.projectName = ko.observable(project.projectName)
+        self.projectDescription = ko.observable(project.projectDescription)
+        self.businessUnit = ko.observable(project.businessUnit)
+        self.projectNumber = ko.observable(project.projectNumber)
+        self.projectManager = ko.observable(project.projectManager)
+        self.customer = ko.observable(project.customer)
+        self.customerDetail = ko.observable(project.customerDetail)
+        self.contractType = ko.observable(project.contractType)
+        self.contractValue = ko.observable(project.contractValue)
+        self.practices = ko.observableArray(project.practices)
 
+    },
+
+    // This function maps the SharePoint List Fields onto the knockout model. The field name should be the internal name (not display name)
+    mapSPrecord = function(sprecord){
+        var row = {}
+        
+        row.projectId = sprecord.ID
+        row.projectName = sprecord.Title
+        row.projectDescription = sprecord.CategoryDescription
+        row.businessUnit = sprecord.BusinessUnit.get_lookupValue()
+        row.projectNumber = sprecord.ProjectNumber
+        row.projectManager = sprecord.ProjectManager.get_lookupValue()
+        row.customer = sprecord.Customer[0].get_lookupValue()
+        row.customerDetail = sprecord.CustomerDetail
+        row.contractType = sprecord.ContractType.get_lookupValue()
+        row.contractValue = sprecord.ContractValue
+        row.practices = sprecord.Practices.map(function(p){return p.get_lookupValue()})
+        
+        console.log('mapping project',row)
+        return new projectModel(row)
+    
     };
 
     return projectListModel;

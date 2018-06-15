@@ -23,28 +23,6 @@ define([
             self.contractTypeList = new ContractTypeModel()
             self.businessUnitList = new BusinessUnitModel()
             self.projectList = new ProjectListModel()
-
-
-            // Actions    
-            self.init = function (data) {
-                return Promise.all([
-                    self.practiceList.init(data.practices),
-                    self.customerList.init(data.customers),
-                    self.contractTypeList.init(data.contractTypes),
-                    self.businessUnitList.init(data.businessUnits),
-                    self.projectList.init(data.projects)
-                ])
-            }
-
-            self.spInit = function (spdata) {
-                return Promise.all([
-                    self.businessUnitList.spInit(spdata.businessUnits),
-                    self.contractTypeList.spInit(spdata.contractTypes),
-                    self.customerList.spInit(spdata.customers),
-                    self.practiceList.spInit(spdata.practices),
-                    self.projectList.spInit(spdata.projects)
-                ])
-            }
         }
 
     })

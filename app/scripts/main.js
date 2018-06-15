@@ -41,14 +41,16 @@ define([
                     Promise.all(
                         // config.lists.slice(0,3).map(j2j.getList)
                         [
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits", dataSetName: "businessUnits"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits"})
                         .then(function(out){spData.businessUnits = out; vm.businessUnitList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices", dataSetName: "practices"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices"})
                         .then(function(out){spData.practices = out; vm.practiceList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type", dataSetName: "contractTypes"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type"})
                         .then(function(out){spData.contractTypes = out; vm.contractTypeList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer", dataSetName: "customers"})
-                        .then(function(out){spData.customers = out; vm.customerList.spInit(out)})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer"})
+                        .then(function(out){spData.customers = out; vm.customerList.spInit(out)}),
+                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Projects"})
+                        .then(function(out){spData.projects = out; vm.projectList.spInit(out)})
                     ]
                     )
                     .then(function(out){console.log('data',spData); console.log('vm',vm)})
