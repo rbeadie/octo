@@ -55,7 +55,7 @@ define([
                     )
                     .then(function(out){console.log('data',spData); console.log('vm',vm)})
 
-
+//next: https://docs.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/hh185011(v%3Doffice.14)
 
                     inst.$appCntr = $(appContainerDiv).html(template)
                 }
