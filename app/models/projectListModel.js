@@ -87,14 +87,14 @@ define([
         row.projectId = sprecord.ID
         row.projectName = sprecord.Title
         row.projectDescription = sprecord.CategoryDescription
-        row.businessUnit = sprecord.BusinessUnit.get_lookupValue()
+        row.businessUnit = sprecord.BusinessUnit == null ? null : sprecord.BusinessUnit.get_lookupValue()
         row.projectNumber = sprecord.ProjectNumber
-        row.projectManager = sprecord.ProjectManager.get_lookupValue()
-        row.customer = sprecord.Customer[0].get_lookupValue()
+        row.projectManager = sprecord.ProjectManager == null ? null : sprecord.ProjectManager.get_lookupValue()
+        row.customer = sprecord.Customer.count > 0 ? sprecord.Customer[0].get_lookupValue() : null
         row.customerDetail = sprecord.CustomerDetail
-        row.contractType = sprecord.ContractType.get_lookupValue()
+        row.contractType = sprecord.ContractType == null ? null : sprecord.ContractType.get_lookupValue()
         row.contractValue = sprecord.ContractValue
-        row.practices = sprecord.Practices.map(function(p){return p.get_lookupValue()})
+        row.practices = sprecord.Practices.count > 0 ? sprecord.Practices.map(function(p){console.log('practice',p); return p.get_lookupValue()}) : null
         
         console.log('mapping project',row)
         return new projectModel(row)

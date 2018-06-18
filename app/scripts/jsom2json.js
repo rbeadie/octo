@@ -23,6 +23,13 @@ define([
                         .then(getSPList)
                         .then(getSPListFields)
                         // .then(function(val){console.log('out',val)})
+                },
+
+                addListItem: function (siteUrl, listName, itemProperties){
+                    return getContext(siteUrl, listName)
+                        .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([itemProperties]))})})
+                        .then(createListItem)
+                        .then(function(val){console.log('out',val)})
                 }
             },
 
@@ -62,8 +69,6 @@ define([
                 return deferred.promise()
 
             },
-
-
             
             getItemFields = function(items){
                 return Promise.all(items.map(function(item){
@@ -96,6 +101,37 @@ define([
                         Function.createDelegate(this, reject)
                     )
                 })
+            },
+
+            createListItem= function (args) {
+                var context = args[0]
+                var listName = args[1]
+                var itemProperties = args[2]
+                var deferred = $.Deferred()
+                var spList = context.get_web().get_lists().getByTitle(listName)           
+                var itemCreateInfo = new SP.ListItemCreationInformation();
+
+                this.newItem = spList.addItem(itemCreateInfo);
+                
+                itemProperties.forEach(function(element) {
+                    if (element.name == 'ProjectManager' && element.value != '') {
+                        var pm = context.get_web().get_siteUsers().getByEmail(element.value + '@hii-tsd.com')       
+                        this.newItem.set_item(element.name, pm)  
+                    } else {                        
+                        this.newItem.set_item(element.name, element.value)                    
+                    }
+                })
+                    
+                this.newItem.update()
+                context.load(this.newItem)               
+                
+                context.executeQueryAsync(Function.createDelegate(this, function(){
+                        deferred.resolve(this.newItem)
+                    }), 
+                    Function.createDelegate(this, function(sender, args){
+                        deferred.reject(args.get_message())
+                    }))
+                return deferred.promise()            
             },
 
             // Query used to read all items in a list
