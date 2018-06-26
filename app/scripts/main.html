@@ -1,3 +1,15 @@
-<div >
-    <p>hello, world</p>
+<div>
+    <div>model id <span data-bind="text: modelName"></span></div>
+    
+    <table>
+        <thead>
+            <tr><th>Id</th><th>Name</th></tr>
+        </thead>
+        <tbody data-bind="foreach: projectList.projectList">
+            <tr>
+                <td data-bind="text: projectId"></td>
+                <td data-bind="text: projectName"></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
