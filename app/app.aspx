@@ -29,4 +29,15 @@
     </asp:Content>
     <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
         <!-- BUILD_INCLUDE("<%= buildTempFolder %>/appLoad.html") -->
+        @@include('app.html')
+            
+        <script type="text/javascript">
+            // @@include('vendor-min.js')
+        </script>
+        <script type="text/javascript">
+            // @@include('app-min.js')
+        </script>
+        <style>
+            @@include('app.css')
+        </style> 
     </asp:Content>

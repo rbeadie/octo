@@ -1,5 +1,5 @@
 define([
-    "text!./main.html",
+    "text!../views/main.html",
     "jquery",
     "ko",
     "./jsom2json",
