@@ -30,6 +30,13 @@ define([
                         .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([itemProperties]))})})
                         .then(createListItem)
                         .then(function(val){console.log('out',val)})
+                },
+
+                addFile: function (siteUrl, listName, fileName, fileContent){
+                    return getContext(siteUrl, listName)
+                        .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([fileName]).concat([fileContent]))})})
+                        .then(writeToFile)
+                        .then(function(val){console.log('out',val)})
                 }
             },
 
@@ -109,10 +116,11 @@ define([
                 var itemProperties = args[2]
                 var deferred = $.Deferred()
                 var spList = context.get_web().get_lists().getByTitle(listName)           
-                var itemCreateInfo = new SP.ListItemCreationInformation();
+                var itemCreateInfo = new SP.ListItemCreationInformation()
 
                 this.newItem = spList.addItem(itemCreateInfo);
                 
+                // temporary version; currently uses key-value pair list; convert to use ko view model object
                 itemProperties.forEach(function(element) {
                     if (element.name == 'ProjectManager' && element.value != '') {
                         var pm = context.get_web().get_siteUsers().getByEmail(element.value + '@hii-tsd.com')       
@@ -139,10 +147,39 @@ define([
                 var qry = new SP.CamlQuery();
                 qry.set_viewXml(
                     '<View><Query><Where><Geq><FieldRef Name=\'ID\'/>' +
-                    '<Value Type=\'Number\'>0</Value></Geq></Where></Query>' +
-                    '<RowLimit>100</RowLimit></View>'
+                    '<Value Type=\'Number\'>0</Value></Geq></Where></Query></View>'
                 );
                 return qry;
+            },
+
+            writeToFile = function(args){
+                console.log('args',args)
+                var context = args[0]
+                var listName = args[1]
+                var fileName = args[2]
+                var fileData = args[3]
+                var deferred = $.Deferred()
+                var spList = context.get_web().get_lists().getByTitle(listName)           
+                var fileCreateInfo = new SP.FileCreationInformation()
+                fileCreateInfo.set_url(fileName)
+                fileCreateInfo.set_overwrite(true)
+                fileCreateInfo.set_content(new SP.Base64EncodedByteArray())
+                
+                for (var i = 0; i < fileData.length; i++) {
+                    fileCreateInfo.get_content().append(fileData.charCodeAt(i));
+                }
+                
+                this.newItem = spList.get_rootFolder().get_files().add(fileCreateInfo)
+                context.load(this.newItem)               
+                
+                context.executeQueryAsync(Function.createDelegate(this, function(){
+                        deferred.resolve(this.newItem)
+                    }), 
+                    Function.createDelegate(this, function(sender, args){
+                        deferred.reject(args.get_message())
+                    }))
+                return deferred.promise()
+            
             },
 
             errorHandler = function () {
