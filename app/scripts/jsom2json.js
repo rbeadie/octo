@@ -30,17 +30,17 @@ define([
                         .then(getSPList)
                         .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([title]))})})
                         .then(getSPListItemByTitle)
+                        .then(function(out){return new Promise(function(resolve,reject){
+                            if (out.length == 0 || out[3] == null)
+                                reject(out)
+                            else
+                                resolve([out[3]])
+                        })})
+                        .catch(addListItemWithTitle)
                         .then(getItemFields)
-                        // .then(function(val){console.log('out',val)})
-                },
-                
-                addListItem: function (siteUrl, listName, itemProperties){
-                    return getContext(siteUrl, listName)
-                        .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([itemProperties]))})})
-                        .then(createListItem)
                         .then(function(val){console.log('out',val)})
                 },
-
+                
                 addFile: function (siteUrl, listName, fileName, fileContent){
                     return getContext(siteUrl, listName)
                         .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([fileName]).concat([fileContent]))})})
@@ -87,7 +87,6 @@ define([
             },
             
             getSPListItemByTitle = function (args) {
-                console.log('args',args)
                 var context = args[0]
                 var lname = args[1]
                 var spList = args[2]   
@@ -97,12 +96,8 @@ define([
                 var spListItems = spList.getItems(createItemTitleQuery(title))
                 context.load(spListItems)
                 context.executeQueryAsync(Function.createDelegate(this, function(){
-                        var collEnumerator = spListItems.getEnumerator()
-        
-                        while (collEnumerator.moveNext()) {
-                            coll.push(collEnumerator.get_current())
-                        }
-                        deferred.resolve(coll)
+                        var item = spListItems.get_item(0)        
+                        deferred.resolve([context, spList, title, item])
                     }), 
                     Function.createDelegate(this, function(sender, args){
                         deferred.reject(args.get_message())
@@ -142,33 +137,22 @@ define([
                         Function.createDelegate(this, reject)
                     )
                 })
-            },
+            },       
 
-            createListItem= function (args) {
+            addListItemWithTitle = function (args) {
                 var context = args[0]
-                var listName = args[1]
-                var itemProperties = args[2]
+                var spList = args[1]
+                var title = args[2]
                 var deferred = $.Deferred()
-                var spList = context.get_web().get_lists().getByTitle(listName)           
                 var itemCreateInfo = new SP.ListItemCreationInformation()
 
-                this.newItem = spList.addItem(itemCreateInfo);
-                
-                // temporary version; currently uses key-value pair list; convert to use ko view model object
-                itemProperties.forEach(function(element) {
-                    if (element.name == 'ProjectManager' && element.value != '') {
-                        var pm = context.get_web().get_siteUsers().getByEmail(element.value + '@hii-tsd.com')       
-                        this.newItem.set_item(element.name, pm)  
-                    } else {                        
-                        this.newItem.set_item(element.name, element.value)                    
-                    }
-                })
-                    
+                this.newItem = spList.addItem(itemCreateInfo)
+                this.newItem.set_item('Title',title)
                 this.newItem.update()
                 context.load(this.newItem)               
                 
                 context.executeQueryAsync(Function.createDelegate(this, function(){
-                        deferred.resolve(this.newItem)
+                        deferred.resolve([this.newItem])
                     }), 
                     Function.createDelegate(this, function(sender, args){
                         deferred.reject(args.get_message())
@@ -199,7 +183,7 @@ define([
                 fileCreateInfo.set_content(new SP.Base64EncodedByteArray())
                 
                 for (var i = 0; i < fileData.length; i++) {
-                    fileCreateInfo.get_content().append(fileData.charCodeAt(i));
+                    fileCreateInfo.get_content().append(fileData.charCodeAt(i))
                 }
                 
                 this.newItem = spList.get_rootFolder().get_files().add(fileCreateInfo)
@@ -217,12 +201,12 @@ define([
 
             // Query used to read all items in a list
             createAllItemsQuery = function () {
-                var qry = new SP.CamlQuery();
+                var qry = new SP.CamlQuery()
                 qry.set_viewXml(
                     '<View><Query><Where><Geq><FieldRef Name=\'ID\'/>' +
                     '<Value Type=\'Number\'>0</Value></Geq></Where></Query></View>'
-                );
-                return qry;
+                )
+                return qry
             },
             
             // Query used to read all items in a list
@@ -239,10 +223,43 @@ define([
             },
             
             errorHandler = function () {
-                console.log('query failed', arguments[1].get_message());
-            };
+                console.log('query failed', arguments[1].get_message())
+            },
+            
+            // DEPRECATED; saved for reference; delete once the update item function is completed
+            createListItem= function (args) {
+                var context = args[0]
+                var listName = args[1]
+                var itemProperties = args[2]
+                var deferred = $.Deferred()
+                var spList = context.get_web().get_lists().getByTitle(listName)           
+                var itemCreateInfo = new SP.ListItemCreationInformation()
 
-        return main;
+                this.newItem = spList.addItem(itemCreateInfo)
+                
+                // temporary version; currently uses key-value pair list; convert to use ko view model object
+                itemProperties.forEach(function(element) {
+                    if (element.name == 'ProjectManager' && element.value != '') {
+                        var pm = context.get_web().get_siteUsers().getByEmail(element.value + '@hii-tsd.com')       
+                        this.newItem.set_item(element.name, pm)  
+                    } else {                        
+                        this.newItem.set_item(element.name, element.value)                    
+                    }
+                })
+                    
+                this.newItem.update()
+                context.load(this.newItem)               
+                
+                context.executeQueryAsync(Function.createDelegate(this, function(){
+                        deferred.resolve(this.newItem)
+                    }), 
+                    Function.createDelegate(this, function(sender, args){
+                        deferred.reject(args.get_message())
+                    }))
+                return deferred.promise()            
+            }
+
+        return main
 
     }
 )
