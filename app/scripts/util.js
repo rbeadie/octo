@@ -10,18 +10,39 @@ define([
             var listName = "Projects"
 
             projects.forEach(function(project){
-                // convert project to sp field names
-                spProject = project
-
-                j2j.modifyListItem(siteUrl, listName, project.projectName,project)
+                var spdata = {}
+                spdata.ID = project.projectId
+                spdata.Title = project.projectName
+                spdata.CategoryDescription = project.projectDescription
+                spdata.BusinessUnit = project.businessUnit// == null ? null : sprecord.BusinessUnit.get_lookupValue())
+                spdata.ProjectNumber = project.projectNumber
+                spdata.ProjectManager = project.projectManager// == null ? null : sprecord.ProjectManager.get_lookupValue())
+                spdata.TechnicalLead = project.technicalLead// == null ? null : sprecord.TechnicalLead.get_lookupValue())
+                spdata.Customer = project.customer// == null || sprecord.Customer[0] == null ? null : sprecord.Customer[0].get_lookupValue())
+                spdata.CustomerDetail = project.customerDetail
+                spdata.ContractType = project.contractType// == null ? null : sprecord.ContractType.get_lookupValue())
+                spdata.PlaceofPerformance = project.placeOfPerformance
+                spdata.PrimeContractor = project.primeContractor
+                spdata.PrimeContractorName = project.primeContractorName
+                spdata.SecurityClearedWork = project.securityClearedWork
+                spdata.SecuritySCIF = project.securitySCIF
+                spdata.ContractValue = project.contractValue
+                spdata.Practices = project.practices//.map(function(p){return p.get_lookupValue()}))
+        
+                spdata.Author = project.createdBy //== null ? null : sprecord.Author.get_lookupValue())
+                spdata.Editor = project.updatedBy //== null ? null : sprecord.Editor.get_lookupValue())
+                spdata.Created = project.created //== null ? null : sprecord.Created)
+                spdata.Modified = project.updated //== null ? null : sprecord.Modified)   
+                
+                j2j.modifyListItem(siteUrl, listName, project.projectName, spdata)
             })
 
         }
 
     },
     projects = [
-        {"projectId":1,"projectName":"1001935","projectDescription":"<div class=\"ExternalClass6EC8489AAAE7409EB41BE3A1F12C0756\"><p><span style=\"color&#58;#000000;font-family&#58;calibri;font-size&#58;15px;white-space&#58;pre-wrap;background-color&#58;#deeaf6;\">Provide comprehensive Web Support Services to the Department of Education for the Departments public-facing internet and intranet Scope of services includes the following areas&#58;  project management, system engineering and design support, software/web development support, system development support, data analysis, quality and management support, training and documentation support, systems security and information assurance support, and emerging technologies support. \nProvide effective connectED (Intranet portal) development, enhancements, operations, and maintenance, including Enterprise site, sub-sites, and Inside ED blog site\nEffective development, enhancements, operations, and maintenance for additional externally-facing and internally-facing web applications \n4 FTEs located at ED in DC</span><br></p></div>","businessUnit":"DMIT","projectNumber":"1001935","projectManager":"Rench, Lee (HII-TSD)","customer":"DoEd","customerDetail":null,"contractType":"CPFF","contractValue":"$3M","practices":[],"placeOfPerformance":"Fairfax, VA","primeContractor":true,"primeContractorName":null,"securityClearedWork":true,"securitySCIF":true,"technicalLead":null,"createdBy":"Wright, Rachel (HII-TSD)","updatedBy":"Wright, Rachel (HII-TSD)","created":"2018-05-31T19:43:05.000Z","updated":"2018-06-26T12:49:35.000Z"},
-        {"projectId":10,"projectName":"Avaya Engineering Support (1010952.0002)","projectDescription":null,"businessUnit":"DMIT","projectNumber":"1010952","projectManager":"Rench, Lee (HII-TSD)","customer":"Avaya","customerDetail":null,"contractType":"FFP","contractValue":null,"practices":[],"placeOfPerformance":null,"primeContractor":null,"primeContractorName":null,"securityClearedWork":null,"securitySCIF":null,"technicalLead":null,"createdBy":"Wright, Rachel (HII-TSD)","updatedBy":"Wright, Rachel (HII-TSD)","created":"2018-06-18T20:19:09.000Z","updated":"2018-06-18T20:19:09.000Z"}
+        {"projectId":1,"projectName":"1001935","projectDescription":"Provide comprehensive Web Support Services to the Department of Education for the Departments public-facing internet and intranet Scope of services includes the following areas:  project management, system engineering and design support, software/web development support, system development support, data analysis, quality and management support, training and documentation support, systems security and information assurance support, and emerging technologies support. \nProvide effective connectED (Intranet portal) development, enhancements, operations, and maintenance, including Enterprise site, sub-sites, and Inside ED blog site\nEffective development, enhancements, operations, and maintenance for additional externally-facing and internally-facing web applications \n4 FTEs located at ED in DC","businessUnit":"DMIT","projectNumber":"1001935","projectManager":"Rench, Lee (HII-TSD)","customer":"DoEd","customerDetail":null,"contractType":"CPFF","contractValue":"$3M","practices":[],"placeOfPerformance":"Fairfax, VA","primeContractor":true,"primeContractorName":null,"securityClearedWork":true,"securitySCIF":true,"technicalLead":null},
+        {"projectId":10,"projectName":"Avaya Engineering Support (1010952.0002)","projectDescription":null,"businessUnit":"DMIT","projectNumber":"1010952","projectManager":"Rench, Lee (HII-TSD)","customer":"Avaya","customerDetail":null,"contractType":"FFP","contractValue":null,"practices":[],"placeOfPerformance":null,"primeContractor":null,"primeContractorName":null,"securityClearedWork":null,"securitySCIF":null,"technicalLead":null}
     ]
         // {"projectId":11,"projectName":"PTX (11079)","projectDescription":null,"businessUnit":"P&I","projectNumber":"11079","projectManager":"McConaghy, Tim (HII-TSD)","customer":null,"customerDetail":null,"contractType":null,"contractValue":null,"practices":[],"placeOfPerformance":null,"primeContractor":null,"primeContractorName":null,"securityClearedWork":null,"securitySCIF":null,"technicalLead":null,"createdBy":"Wright, Rachel (HII-TSD)","updatedBy":"Wright, Rachel (HII-TSD)","created":"2018-06-18T20:52:58.000Z","updated":"2018-06-18T20:52:58.000Z"},
         // {"projectId":12,"projectName":"NANA (10634)","projectDescription":null,"businessUnit":"P&I","projectNumber":"10634","projectManager":"McConaghy, Tim (HII-TSD)","customer":null,"customerDetail":null,"contractType":null,"contractValue":null,"practices":[],"placeOfPerformance":null,"primeContractor":null,"primeContractorName":null,"securityClearedWork":null,"securitySCIF":null,"technicalLead":null,"createdBy":"Wright, Rachel (HII-TSD)","updatedBy":"Wright, Rachel (HII-TSD)","created":"2018-06-18T20:52:58.000Z","updated":"2018-06-18T20:52:58.000Z"},

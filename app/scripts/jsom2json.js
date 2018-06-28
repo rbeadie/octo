@@ -185,7 +185,7 @@ define([
                 var deferred = $.Deferred()
                 
                 for (var key in itemProperties) {
-                    console.log('key', key, itemProperties[key])
+                    listItem.set_item(key, itemProperties[key])
                 }
                 listItem.update()
                 context.load(listItem)               

@@ -37,20 +37,20 @@ define([
                  *      The HTMl element where the app will be displayed
                  */
                 start: function (appContainerDiv) {
-                    var spData = {}
+                   var spData = {}
                     
                     Promise.all(
                         // config.lists.slice(0,3).map(j2j.getList)
                         [
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "BusinessUnits"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "BusinessUnitsLookup"})
                         .then(function(out){spData.businessUnits = out; vm.businessUnitList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Practices"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "PracticesLookup"})
                         .then(function(out){spData.practices = out; vm.practiceList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Contract Type"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "ContractTypesLookup"})
                         .then(function(out){spData.contractTypes = out; vm.contractTypeList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Customer"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "CustomersLookup"})
                         .then(function(out){spData.customers = out; vm.customerList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris/octo", listName: "Projects"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "MasterProjectsList"})
                         .then(function(out){spData.projects = out; vm.projectList.spInit(out)})
                     ]
                     )
