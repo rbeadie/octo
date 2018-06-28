@@ -25,6 +25,15 @@ define([
                         // .then(function(val){console.log('out',val)})
                 },
 
+                getListItem: function (siteUrl, listName, title) {
+                    return getContext(siteUrl, listName)
+                        .then(getSPList)
+                        .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([title]))})})
+                        .then(getSPListItemByTitle)
+                        .then(getItemFields)
+                        // .then(function(val){console.log('out',val)})
+                },
+                
                 addListItem: function (siteUrl, listName, itemProperties){
                     return getContext(siteUrl, listName)
                         .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([itemProperties]))})})
@@ -61,6 +70,31 @@ define([
                 var deferred = $.Deferred()
                 var coll = []
                 var spListItems = spList.getItems(createAllItemsQuery())
+                context.load(spListItems)
+                context.executeQueryAsync(Function.createDelegate(this, function(){
+                        var collEnumerator = spListItems.getEnumerator()
+        
+                        while (collEnumerator.moveNext()) {
+                            coll.push(collEnumerator.get_current())
+                        }
+                        deferred.resolve(coll)
+                    }), 
+                    Function.createDelegate(this, function(sender, args){
+                        deferred.reject(args.get_message())
+                    }))
+                return deferred.promise()
+
+            },
+            
+            getSPListItemByTitle = function (args) {
+                console.log('args',args)
+                var context = args[0]
+                var lname = args[1]
+                var spList = args[2]   
+                var title = args[3]      
+                var deferred = $.Deferred()
+                var coll = []
+                var spListItems = spList.getItems(createItemTitleQuery(title))
                 context.load(spListItems)
                 context.executeQueryAsync(Function.createDelegate(this, function(){
                         var collEnumerator = spListItems.getEnumerator()
@@ -142,18 +176,17 @@ define([
                 return deferred.promise()            
             },
 
-            // Query used to read all items in a list
-            createAllItemsQuery = function () {
-                var qry = new SP.CamlQuery();
-                qry.set_viewXml(
-                    '<View><Query><Where><Geq><FieldRef Name=\'ID\'/>' +
-                    '<Value Type=\'Number\'>0</Value></Geq></Where></Query></View>'
-                );
-                return qry;
-            },
+            writeListItem = function(args){
+                var context = args[0]
+                var listName = args[1]
+                var itemId = args[2]
+                var itemProperties = args[3]
+                var deferred = $.Deferred()
+                var spList = context.get_web().get_lists().getByTitle(listName)           
+
+            }
 
             writeToFile = function(args){
-                console.log('args',args)
                 var context = args[0]
                 var listName = args[1]
                 var fileName = args[2]
@@ -182,6 +215,29 @@ define([
             
             },
 
+            // Query used to read all items in a list
+            createAllItemsQuery = function () {
+                var qry = new SP.CamlQuery();
+                qry.set_viewXml(
+                    '<View><Query><Where><Geq><FieldRef Name=\'ID\'/>' +
+                    '<Value Type=\'Number\'>0</Value></Geq></Where></Query></View>'
+                );
+                return qry;
+            },
+            
+            // Query used to read all items in a list
+            createItemTitleQuery = function (title) {
+                var qry = new SP.CamlQuery()
+                qry.set_viewXml(
+                    '<View><Query><Where><Eq><FieldRef Name=\'Title\'/>' +
+                    '<Value Type=\'Text\'>' + title + '</Value></Eq></Where></Query></View>'
+                )
+                // <Query><Where><Eq><FieldRef Name='status' /><Value Type='Choice'>Yes</Value></Eq></Where></Query>
+                // <Query><Where><Contains><FieldRef Name='Title'/><Value Type='Text'>title </Value></Contains></Where></Query>
+                // console.log(qry)
+                return qry
+            },
+            
             errorHandler = function () {
                 console.log('query failed', arguments[1].get_message());
             };
