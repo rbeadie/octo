@@ -38,7 +38,24 @@ define([
                         })})
                         .catch(addListItemWithTitle)
                         .then(getItemFields)
-                        .then(function(val){console.log('out',val)})
+                        // .then(function(val){console.log('out',val)})
+                },
+                
+                modifyListItem: function (siteUrl, listName, title, itemJSON) {
+                    return getContext(siteUrl, listName)
+                        .then(getSPList)
+                        .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([title]))})})
+                        .then(getSPListItemByTitle)
+                        .then(function(out){return new Promise(function(resolve,reject){
+                            if (out.length == 0 || out[3] == null)
+                                reject(out)
+                            else
+                                resolve([out[0],out[3]])
+                        })})
+                        .catch(addListItemWithTitle)
+                        .then(function(args){return new Promise(function(resolve,reject){resolve(args.concat([itemJSON]))})})
+                        .then(writeListItem)
+                        // .then(function(val){console.log('out',val)})
                 },
                 
                 addFile: function (siteUrl, listName, fileName, fileContent){
@@ -152,7 +169,7 @@ define([
                 context.load(this.newItem)               
                 
                 context.executeQueryAsync(Function.createDelegate(this, function(){
-                        deferred.resolve([this.newItem])
+                        deferred.resolve([context, this.newItem])
                     }), 
                     Function.createDelegate(this, function(sender, args){
                         deferred.reject(args.get_message())
@@ -161,13 +178,25 @@ define([
             },
 
             writeListItem = function(args){
+                console.log('write args', args)
                 var context = args[0]
-                var listName = args[1]
-                var itemId = args[2]
-                var itemProperties = args[3]
+                var listItem = args[1]
+                var itemProperties = args[2]
                 var deferred = $.Deferred()
-                var spList = context.get_web().get_lists().getByTitle(listName)           
-
+                
+                for (var key in itemProperties) {
+                    console.log('key', key, itemProperties[key])
+                }
+                listItem.update()
+                context.load(listItem)               
+                
+                context.executeQueryAsync(Function.createDelegate(this, function(){
+                        deferred.resolve([listItem])
+                    }), 
+                    Function.createDelegate(this, function(sender, args){
+                        deferred.reject(args.get_message())
+                    }))
+                return deferred.promise()            
             }
 
             writeToFile = function(args){

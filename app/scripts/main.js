@@ -1,8 +1,10 @@
 define([
     "text!./main.html",
+    // "text!./mainProject.html",
     "jquery",
     "ko",
     "./jsom2json",
+    "./util",
     "../models/mainModel",
     "./config",
     // -modules not needing a reference----------
@@ -10,9 +12,11 @@ define([
     "./mapListFields"
 ], function (
     template,
+    // projectTemplate,
     $,
     ko,
     j2j,
+    util,
     VM,
     config,
     mapListFields
@@ -50,6 +54,9 @@ define([
                         .then(function(out){spData.projects = out; vm.projectList.spInit(out)})
                     ]
                     )
+                    .then(function(out){
+                        util.loadProjects()
+                    })
                     // .then(function(out){
                     //     var jsonProjectList = new String()                        
                     //     vm.projectList.projectList().forEach(function(item){
@@ -58,6 +65,16 @@ define([
                     //     j2j.addFile("/sites/corporate/iris/octo", "Documents","projectList.txt",jsonProjectList)                
                     // })
                     .then(function(){
+                        // ko.components.register('project-view', {
+                        //     viewModel: {
+                        //         createViewModel: function (params, componentInfo) {
+                        //             if (params.model) return params.model
+                        //             else return new vm.projectList.newProject(params)
+                        //         }
+                        //     },
+                        //     template: projectTemplate
+                        // })
+
                         ko.applyBindings(vm)
                     })
                     
