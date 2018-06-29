@@ -64,7 +64,7 @@ define([
 
             self.projectId(sprecord.ID)
             self.projectName(sprecord.Title)
-            self.projectDescription(sprecord.CategoryDescription)
+            self.projectDescription(sprecord.ProjectDescription)
             self.businessUnit(sprecord.BusinessUnit == null ? null : sprecord.BusinessUnit.get_lookupValue())
             self.projectNumber(sprecord.ProjectNumber)
             self.projectManager(sprecord.ProjectManager == null ? null : sprecord.ProjectManager.get_lookupValue())

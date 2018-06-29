@@ -54,9 +54,6 @@ define([
                         .then(function(out){spData.projects = out; vm.projectList.spInit(out)})
                     ]
                     )
-                    .then(function(out){
-                        util.loadProjects()
-                    })
                     // .then(function(out){
                     //     var jsonProjectList = new String()                        
                     //     vm.projectList.projectList().forEach(function(item){

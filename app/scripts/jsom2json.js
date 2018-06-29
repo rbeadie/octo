@@ -178,25 +178,35 @@ define([
             },
 
             writeListItem = function(args){
-                console.log('write args', args)
                 var context = args[0]
+                var web = context.get_web()
                 var listItem = args[1]
                 var itemProperties = args[2]
-                var deferred = $.Deferred()
-                
-                for (var key in itemProperties) {
-                    listItem.set_item(key, itemProperties[key])
-                }
-                listItem.update()
-                context.load(listItem)               
-                
-                context.executeQueryAsync(Function.createDelegate(this, function(){
-                        deferred.resolve([listItem])
-                    }), 
-                    Function.createDelegate(this, function(sender, args){
-                        deferred.reject(args.get_message())
-                    }))
-                return deferred.promise()            
+                var deferred = $.Deferred()           
+
+                getUserByName(itemProperties["ProjectManager"])
+                .catch(function(rej){console.log('failed', rej)})
+                .then(function(email){
+                    for (var key in itemProperties) {
+                        if (key == 'ProjectManager' && email) {
+                            var pm = context.get_web().get_siteUsers().getByEmail(email.EMail) 
+                            listItem.set_item(key, pm)
+                        } else {                        
+                            listItem.set_item(key, itemProperties[key])                  
+                        }
+                    }
+                    listItem.update()
+                    context.load(listItem)               
+                    
+                    context.executeQueryAsync(Function.createDelegate(this, function(){
+                            deferred.resolve([listItem])
+                        }), 
+                        Function.createDelegate(this, function(sender, args){
+                            deferred.reject(args.get_message())
+                        }))
+                    return deferred.promise()      
+                })
+
             }
 
             writeToFile = function(args){
@@ -251,6 +261,21 @@ define([
                 return qry
             },
             
+            getUserByName = function (userName){
+                var context = SP.ClientContext.get_current()
+                var deferred = $.Deferred()
+
+                var userList = context.get_web().get_siteUserInfoList()
+                var query = new SP.CamlQuery()
+                query.set_viewXml(
+                    '<View><Query><Where><Eq><FieldRef Name=\'Title\'/><Value Type=\'Text\'>' + userName + '</Value></Eq></Where></Query><RowLimit>1</RowLimit></View>'
+                )
+                var users = userList.getItems(query)
+                context.load(users, 'Include(EMail)')
+                context.executeQueryAsync(Function.createDelegate(this, function(){if (users.get_count() > 0) {deferred.resolve(users.itemAt(0).get_fieldValues())} else {deferred.reject('Failed to find PM ' + userName)} }), Function.createDelegate(errorHandler))
+                return deferred.promise()
+            },
+              
             errorHandler = function () {
                 console.log('query failed', arguments[1].get_message())
             },
