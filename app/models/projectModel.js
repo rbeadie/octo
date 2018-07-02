@@ -21,6 +21,7 @@ define([
         self.customerDetail = ko.observable()
         self.contractType = ko.observable()
         self.contractValue = ko.observable()
+        self.contractFTEs = ko.observable()
         self.practices = ko.observableArray()
         self.placeOfPerformance = ko.observable()
         self.primeContractor = ko.observable()
@@ -45,6 +46,7 @@ define([
             self.customerDetail(project.customerDetail)
             self.contractType(project.contractType)
             self.contractValue(project.contractValue)
+            self.contractFTEs(project.contractFTEs)
             self.practicesArray(project.practices)
             self.placeOfPerformance(project.placeOfPerformance)
             self.primeContractor(project.primeContractor)
@@ -78,6 +80,7 @@ define([
             self.securityClearedWork(sprecord.SecurityClearedWork)
             self.securitySCIF(sprecord.SecuritySCIF)
             self.contractValue(sprecord.ContractValue)
+            self.contractFTEs(sprecord.ContractFTEs)
             self.practices(sprecord.Practices.map(function(p){return p.get_lookupValue()}))
     
             self.createdBy(sprecord.Author == null ? null : sprecord.Author.get_lookupValue())
