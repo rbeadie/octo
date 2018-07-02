@@ -50,7 +50,7 @@ define([
                         .then(function(out){spData.contractTypes = out; vm.contractTypeList.spInit(out)}),
                         j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "CustomersLookup"})
                         .then(function(out){spData.customers = out; vm.customerList.spInit(out)}),
-                        j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "MasterProjectsList"})
+                        j2j.getList({ siteUrl: "/sites/corporate/iris", listName: "Master Projects List"})
                         .then(function(out){spData.projects = out; vm.projectList.spInit(out)})
                     ]
                     )

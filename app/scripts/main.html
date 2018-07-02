@@ -1,15 +1,64 @@
-<div>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<div class="container">
     <div>model id <span data-bind="text: modelName"></span></div>
     
-    <table>
+    <table class="table">
         <thead>
-            <tr><th>Id</th><th>Name</th></tr>
+            <tr>
+                <th>ID</th>
+                <th>Business Unit</th>
+                <th>Practices</th>
+                <th>Project Number</th>
+                <th>Title</th>
+                <th>Contract Type</th>
+                <th>Customer</th>
+                <th>Customer Detail</th>
+                <th>Project Manager</th>
+                <th>Technical Lead</th>
+                <th>Place of Performance</th>
+                <th>Contract Value</th>
+                <th>Contract FTEs</th>
+                <th>Prime Contractor</th>
+                <th>Prime Contractor Name</th>
+                <th>Security Cleared Work</th>
+                <th>Security SCIF</th>
+                <!-- <th>Project Description</th>
+                <th>Author</th>
+                <th>Created</th>
+                <th>Editor</th>
+                <th>Modified</th> -->
+            </tr>
         </thead>
         <tbody data-bind="foreach: projectList.projectList">
             <tr>
                 <td data-bind="text: projectId"></td>
+                <td data-bind="text: businessUnit"></td>
+                <td data-bind="text: practices"></td>
+                <td data-bind="text: projectNumber"></td>
                 <td data-bind="text: projectName"></td>
+                <td data-bind="text: contractType"></td>
+                <td data-bind="text: customer"></td>
+                <td data-bind="text: customerDetail"></td>
+                <td data-bind="text: projectManager"></td>
+                <td data-bind="text: technicalLead"></td>
+                <td data-bind="text: placeOfPerformance"></td>
+                <td data-bind="text: contractValue"></td>
+                <td data-bind="text: contractFTEs"></td>
+                <td data-bind="text: primeContractor"></td>
+                <td data-bind="text: primeContractorName"></td>
+                <td data-bind="text: securityClearedWork"></td>
+                <td data-bind="text: securitySCIF"></td>
+                <!-- <td data-bind="text: projectDescription"></td>
+                <td data-bind="text: createdBy"></td>
+                <td data-bind="text: reated"></td>
+                <td data-bind="text: updatedBy"></td>
+                <td data-bind="text: updated"></td> -->
             </tr>
         </tbody>
     </table>
 </div>
+
+
+
